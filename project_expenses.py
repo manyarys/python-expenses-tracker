@@ -22,6 +22,7 @@ def load_data():
         pass
 
 def print_report():
+    
     print("\nОтчёт по категориям:")
     if not totals_by_category:
         print("Пока нет расходов.")
@@ -33,6 +34,28 @@ def print_report():
         grand_total += amount
 
     print(f"\nИТОГО: {grand_total:.2f}\n")
+def top_category():
+    if not totals_by_category:
+        print("Пока нет расходов.")
+        return
+    category, amount = max(totals_by_category.items(), key=lambda x: x[1])
+    print(f"Топ категория: {category} = {amount:.2f}")
+
+def reset_data():
+    confirm = input("Точно очистить ВСЕ данные? (yes/no): ").strip().lower()
+    if confirm != "yes":
+        print("Отменено.")
+        return
+
+    # очистка файла
+    with open(FILENAME, "w") as file:
+        file.write("")
+
+    # очистка памяти
+    totals_by_category.clear()
+
+    print("Данные очищены.")
+
 
 def is_number(value: str) -> bool:
     value = value.strip()
@@ -45,12 +68,21 @@ load_data()
 print("Учёт расходов v3 (категории)")
 print("Формат ввода: категория сумма")
 print("Пример: food 12.50")
-print("Команды: report | q\n")
+print("Команды: report | top | reset | q\n")
 
 print_report()
 
 while True:
     text = input("Ввод: ").strip()
+    cmd = text.lower()
+
+    if cmd == "top":
+        top_category()
+        continue
+
+    if cmd == "reset":
+        reset_data()
+        continue
 
     if text.lower() == "q":
         break
@@ -73,6 +105,7 @@ while True:
 
     amount = float(amount_str)
 
+
     # сохраняем в файл
     with open(FILENAME, "a") as file:
         file.write(f"{category},{amount}\n")
@@ -81,6 +114,7 @@ while True:
     totals_by_category[category] = totals_by_category.get(category, 0) + amount
 
     print(f"Добавлено: {category} {amount:.2f}")
+    
 
 print_report()
 print("Пока!")

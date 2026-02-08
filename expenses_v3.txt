@@ -1,4 +1,0 @@
-food,78.8
-transport,30.0
-home,30.0
-rent,1275.0
